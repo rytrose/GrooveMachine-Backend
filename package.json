@@ -1,0 +1,14 @@
+{
+  "name": "groovemachinebackend",
+  "version": "1.0.0",
+  "description": "Back end testing for web version of grooveMachine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
