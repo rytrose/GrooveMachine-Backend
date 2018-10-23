@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GrooveMachine Backend Testing</title>
+
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!--jQuery-->
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+<!--randomColor-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js"></script>
+
+<div id="enter" style="text-align: center; margin-top: 10%;">
+    <label for="name">Name:</label>
+    <input id="name" type="text">
+    <button onclick="enterRoom()">Start the GrooveMachine</button>
+</div>
+
+<div id="game" style="display: none;">
+    <div id="players"></div>
+
+    <div id="buttons" style="text-align: center; margin-top: 10%;">
+        <div>
+            <img id="game_0" class="gameButton gray" src="images/circle.png">
+            <img id="game_1" class="gameButton gray" src="images/circle.png">
+            <img id="game_2" class="gameButton gray" src="images/circle.png">
+            <img id="game_3" class="gameButton gray" src="images/circle.png">
+        </div>
+
+        <div>
+            <img id="button_0" class="gameButton" src="images/circle.png" onmousedown="input(this)" onmouseup="unclick(this)">
+            <img id="button_1" class="gameButton" src="images/circle.png" onmousedown="input(this)" onmouseup="unclick(this)">
+            <img id="button_2" class="gameButton" src="images/circle.png" onmousedown="input(this)" onmouseup="unclick(this)">
+            <img id="button_3" class="gameButton" src="images/circle.png" onmousedown="input(this)" onmouseup="unclick(this)">
+        </div>
+    </div>
+</div>
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/multiplayer.js"></script>
+</html>

@@ -4,11 +4,15 @@
   "description": "Back end testing for web version of grooveMachine.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "author": "",
+  "repository": "rytrose/GrooveMachine-Backend",
+  "author": "Ryan Rose",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "pg": "^7.5.0",
+    "socket.io": "^2.1.1",
+    "uuid": "^3.3.2"
   }
 }

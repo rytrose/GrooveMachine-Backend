@@ -1,0 +1,19 @@
+.gameButton {
+    width: 100px;
+}
+
+.gray {
+    background-color: darkgray;
+}
+
+.on {
+    background-color: darkgreen;
+}
+
+.colorFilter {
+    background-color: var(--playerColor)
+}
+
+.preventClick {
+    pointer-events: none;
+}
