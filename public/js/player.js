@@ -11,7 +11,6 @@ class Player {
     constructor(baseURL) {
         // N.B. SHOULD INCLUDE TRAILING SLASH
         this.baseURL = baseURL;
-        this.loaded = Array.from(new Array(numModFilesPerSample), () => false);
         this.sequencer = null;
     }
 
@@ -27,13 +26,7 @@ class Player {
         let sampleSettings = {
             "volume": 0,
             "onload": (players) => {
-                numFilesLoaded++;
                 console.log("Loaded samples.");
-                this.loaded[SAMPLE] = true;
-
-                // Check if last to load, if so, callback
-                if(this.loaded.every((e) => e)) callback();
-
                 players.toMaster();
             }
         };
@@ -41,13 +34,7 @@ class Player {
         let highpassSettings = {
             "volume": 0,
             "onload": (players) => {
-                numFilesLoaded++;
                 console.log("Loaded highpass samples.");
-                this.loaded[HIGHPASS] = true;
-
-                // Check if last to load, if so, callback
-                if(this.loaded.every((e) => e)) callback();
-
                 players.toMaster();
             }
         };
@@ -55,13 +42,7 @@ class Player {
         let lowpassSettings = {
             "volume": 0,
             "onload": (players) => {
-                numFilesLoaded++;
                 console.log("Loaded lowpass samples.");
-                this.loaded[LOWPASS] = true;
-
-                // Check if last to load, if so, callback
-                if(this.loaded.every((e) => e)) callback();
-
                 players.toMaster();
             }
         };
@@ -69,6 +50,8 @@ class Player {
         this.sounds[SAMPLE] = new Tone.Players(sampleNames, sampleSettings);
         this.sounds[HIGHPASS] = new Tone.Players(highpassNames, highpassSettings);
         this.sounds[LOWPASS] = new Tone.Players(lowpassNames, lowpassSettings);
+
+        Tone.Buffer.on("load", callback);
     }
 
     generateFileNames(baseName, type) {
@@ -96,7 +79,54 @@ class Player {
     }
 
     defineSequencer(onStep) {
-        this.sequencer = new Tone.Sequence((time, step) => onStep(), range(8), "2n");
+        this.sequencer = new Tone.Sequence((time, step) => onStep(time, step, this.sounds), range(8), "2n");
+    }
+
+    getOfflineSounds() {
+        let offlineSounds = Array.from(new Array(numModFilesPerSample), () => null);
+
+        // Samples
+        let sampleBuffers = {};
+        for(let name in this.sounds[SAMPLE]._players) sampleBuffers[name] = this.sounds[SAMPLE]._players[name]._buffer;
+        offlineSounds[SAMPLE] = new Tone.Players(sampleBuffers).toMaster();
+
+        // Highpass
+        let highpassBuffers = {};
+        for(let name in this.sounds[HIGHPASS]._players) highpassBuffers[name] = this.sounds[HIGHPASS]._players[name]._buffer;
+        offlineSounds[HIGHPASS] = new Tone.Players(highpassBuffers).toMaster();
+
+        // Lowpass
+        let lowpassBuffers = {};
+        for(let name in this.sounds[LOWPASS]._players) lowpassBuffers[name] = this.sounds[LOWPASS]._players[name]._buffer;
+        offlineSounds[LOWPASS] = new Tone.Players(lowpassBuffers).toMaster();
+
+        return offlineSounds;
+    }
+
+    renderOut() {
+        Tone.Offline((Transport) => {
+            let offlineSounds = this.getOfflineSounds();
+            let offlineSequencer = new Tone.Sequence((time, step) => onStep(time, step, offlineSounds), range(8), "2n");
+            offlineSequencer.start();
+            Transport.start();
+        }, this.sequencer.length).then((buffer) => {
+            let wav = audioBufferToWav(buffer._buffer);
+            let blob = new window.Blob([ new DataView(wav) ], {
+                type: 'audio/wav'
+            });
+
+            let url = window.URL.createObjectURL(blob);
+
+            // Prompts a download
+            let anchor = document.createElement('a');
+            document.body.appendChild(anchor);
+            anchor.style = 'display: none';
+            anchor.href = url;
+            anchor.download = 'audio.wav';
+            anchor.click();
+
+            window.URL.revokeObjectURL(url);
+        });
     }
 
 }

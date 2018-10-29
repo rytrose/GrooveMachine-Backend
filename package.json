@@ -10,6 +10,7 @@
   "author": "Ryan Rose",
   "license": "ISC",
   "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
     "express": "^4.16.4",
     "pg": "^7.5.0",
     "socket.io": "^2.1.1",

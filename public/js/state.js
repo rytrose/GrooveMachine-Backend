@@ -5,8 +5,9 @@ let state = {
 
 let player = new Player("https://s3.amazonaws.com/rytrose-personal-website/groove-machine-sounds/");
 
-let onStep = () => {
+let onStep = (time, step, sounds) => {
     console.log("oh shit, the state is", state);
+    sounds[0].get("0_" + step).start();
 };
 
 player.loadSounds(() => {
